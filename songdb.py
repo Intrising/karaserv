@@ -82,9 +82,14 @@ class songdb:
         if field not in [ 'name', 'singer']:
             raise ValueError, 'Can not grep on field {0}'.format(field)
         recs=[]
-        for song in self.songs:
-            if data in song[field]:
-                recs.append(song)
+        if field=='singer':
+            for song in self.songs:
+                if data in song['singer']:
+                    recs.append( song)
+        else:
+            for song in self.songs:
+                if data in song[field]:
+                    recs.append(song)
         return recs
 
     def fielddata( self, field):
@@ -153,7 +158,19 @@ if __name__ == '__main__':
             print 'try to grep: ', chs[si]
             ses = db.grep( chs[si], 'name')
             for se in ses:
-                print( db.descstr(se))
+                print( '\t'+db.descstr(se))
+
+    def greptest(db):
+        qstr = raw_input('please input song name for search:')
+        ses = db.grep( qstr, 'name')
+        for se in ses:
+            print( '\t'+db.descstr(se))
+        qstr = raw_input('please input singer name for search:')
+        ses = db.grep( qstr, 'singer')
+        for se in ses:
+            print( '\t'+db.descstr(se))
+      
+        
     def list_singers_by_lang( db):
         print 'lang 1:'
         sgnames = db.qsingerbylang( 1)
@@ -175,8 +192,8 @@ if __name__ == '__main__':
         for name in sgnames:
             print name
 
-
     db = songdb(sys.argv[1])
-    list_singers_by_gender(db)
+    greptest(db)
+    #list_singers_by_gender(db)
 
 
