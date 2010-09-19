@@ -32,11 +32,12 @@ class songdb:
     def add_singer( self, allsingers, singername, gender, lang):
         for singer in allsingers:
             if singername == singer['name']:
+                #todo: abondon set operation
                 singer['langs'].add(lang)
                 if gender in ['F', 'M']:
                     singer['gender']=gender
                 return
-        allsingers.append( dict(name=singername, langs=set([lang]), gender='X'))
+        allsingers.append( dict(name=singername, langs=[lang], gender='X'))
 
     def dump(self):
         for song in self.songs:
@@ -62,15 +63,14 @@ class songdb:
                     recs.append(song)
         return recs
 
-    def qsingerbylang( self, lang):
-        recs=[]
-        for singer in self.singers:
-            if lang in singer['langs']:
-                recs.append( singer['name'])
-        return recs
-
-    def qsingerbygender( self, gender):
-        return [singer['name'] for singer in self.singers if singer['gender']==gender]
+    def qsingers( self, field=None, data=None):
+        if field==None:
+            return self.singers
+        if field=='lang':
+            field='langs'
+        if field=='langs' and type(data)==str:
+            data=int(data)
+        return [singer for singer in self.singers if data in singer[field]]
         
     def querybyname( self, name):
         self.query( name, 'name')
@@ -112,9 +112,6 @@ class songdb:
         
 if __name__ == '__main__':
     import sys,random
-
-    def dumpsingers(db):
-        db.dump_singers()
 
     def qsongbyno(db):
         print 'qsong by sno'
@@ -172,28 +169,26 @@ if __name__ == '__main__':
       
         
     def list_singers_by_lang( db):
-        print 'lang 1:'
-        sgnames = db.qsingerbylang( 1)
-        for name in sgnames:
-            print name
-        print 'lang 2:'
-        sgnames = db.qsingerbylang( 2)
-        for name in sgnames:
-            print name
-
-
+        for lang in ['1', '2']:
+            print 'lang ', lang
+            singers = db.qsingers( 'lang', lang)
+            for singer in singers:
+                print singer['name']
+        
     def list_singers_by_gender( db):
-        print 'male singers:'
-        sgnames = db.qsingerbygender( 'M')
-        for name in sgnames:
-            print name
-        print 'female singers:'
-        sgnames = db.qsingerbygender( 'F')
-        for name in sgnames:
-            print name
+        for gender in ['M', 'F']:
+            print 'gender ', gender
+            singers = db.qsingers( 'gender', gender)
+            for singer in singers:
+                print singer['name']
+
+    def list_all_singers( db):
+        singers = db.qsingers()
+        for singer in singers:
+            print singer['name']
 
     db = songdb(sys.argv[1])
-    greptest(db)
-    #list_singers_by_gender(db)
-
+    #greptest(db)
+    list_singers_by_gender(db)
+    #list_all_singers(db)
 

@@ -21,7 +21,16 @@ def qsong():
 
 @route('/qsinger', method='GET')
 def qsinger():
-	
+    for f in ['lang', 'gender']:
+        qval = request.GET.get( f , '').strip()
+        if qval:
+            break
+    singers = systemdb.qsingers( f, qval)
+    if len(singers)==0:
+        return 'Error: not found' 
+        #raise HTTPError(code=403)
+    return json.dumps( singers, True, False, indent=4)
+
 @route('/grepsong', method='GET')
 def grepsong():
     for f in ['name', 'singer']:
