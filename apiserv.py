@@ -12,7 +12,7 @@ def qsong():
     if qval==None:
         #raise HTTPError(code=403)
         return 'Error: no such field'
-    qval=urllib.unquote(qval) 
+    qval=urllib.unquote(qval)
     ses = systemdb.query( qval, field=f)
     if len(ses)==0:
         return 'Error: not found' 
@@ -31,15 +31,15 @@ def qsinger():
         #raise HTTPError(code=403)
     return json.dumps( singers, True, False, indent=4)
 
-@route('/grepsong', method='GET')
-def grepsong():
+@route('/search', method='GET')
+def searchsong():
     for f in ['name', 'singer']:
         qval = request.GET.get( f , '').strip()
         if qval:
             break
     if qval==None:
         return "invalid query"
-    ses = systemdb.grep( qval, field=f)
+    ses = systemdb.search( qval, field=f)
     if len(ses)==0:
         return "couldn't find any song matched"
     return json.dumps( ses, True, False, indent=4)
@@ -53,4 +53,4 @@ def createtab():
 import sys,songdb
 systemdb = songdb.songdb( sys.argv[1] )
 debug(True)
-run( host='kemity.game-server.cc', port=8080)
+run(  port=8080)
