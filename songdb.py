@@ -32,8 +32,8 @@ class songdb:
     def add_singer( self, allsingers, singername, gender, lang):
         for singer in allsingers:
             if singername == singer['name']:
-                #todo: abondon set operation
-                singer['langs'].add(lang)
+                if lang not in singer['langs']:
+                    singer['langs'].append(lang)
                 if gender in ['F', 'M']:
                     singer['gender']=gender
                 return
@@ -78,13 +78,14 @@ class songdb:
     def querybysinger( self, singer):
         self.query( singer, 'singer')
         
-    def grep( self, data, field='name'):
+    def search( self, data, field='name'):
         if field not in [ 'name', 'singer']:
             raise ValueError, 'Can not grep on field {0}'.format(field)
         recs=[]
         if field=='singer':
             for song in self.songs:
-                if data in song['singer']:
+                singerlstr = ''.join(song['singer'])
+                if data in singerlstr:
                     recs.append( song)
         else:
             for song in self.songs:
@@ -147,23 +148,13 @@ if __name__ == '__main__':
             for se in ses:
                 print( db.descstr(se))
 
-    def grepname(db):
-        print 'grep name'
-        chs = db.charset('name')
-        random.shuffle(chs)
-        for si in xrange(10):
-            print 'try to grep: ', chs[si]
-            ses = db.grep( chs[si], 'name')
-            for se in ses:
-                print( '\t'+db.descstr(se))
-
-    def greptest(db):
+    def searchtest(db):
         qstr = raw_input('please input song name for search:')
-        ses = db.grep( qstr, 'name')
+        ses = db.search( qstr, 'name')
         for se in ses:
             print( '\t'+db.descstr(se))
         qstr = raw_input('please input singer name for search:')
-        ses = db.grep( qstr, 'singer')
+        ses = db.search( qstr, 'singer')
         for se in ses:
             print( '\t'+db.descstr(se))
       
@@ -188,7 +179,8 @@ if __name__ == '__main__':
             print singer['name']
 
     db = songdb(sys.argv[1])
-    #greptest(db)
-    list_singers_by_gender(db)
+    searchtest(db)
+    #list_singers_by_lang( db)
+    #list_singers_by_gender(db)
     #list_all_singers(db)
 
