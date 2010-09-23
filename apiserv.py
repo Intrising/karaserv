@@ -3,10 +3,11 @@ from bottle import route, run, template, request, response, error,debug
 import songdb
 
 
-def simplify_singers( ses):
-    for se in ses:
-        newsinger = '&'.join(se['singer'])
-        se['singer']=newsinger
+def simplify_singers( se):
+    newse = se.copy()
+    newse['singer'] = '&'.join( se['singer'])
+    return newse
+        
 
 @route('/qsong', method='GET')
 def qsong():
@@ -23,8 +24,8 @@ def qsong():
     if len(ses)==0:
         return 'Error: not found' 
         #raise HTTPError(code=403)
-    simplify_singers(ses)
-    return json.dumps( ses, True, False, indent=4)
+    newses = [ simplify_singers(se) for se in ses]
+    return json.dumps( newses, True, False, indent=4)
 
 @route('/qsinger', method='GET')
 def qsinger():
@@ -49,8 +50,8 @@ def searchsong():
     ses = systemdb.search( qval, field=f)
     if len(ses)==0:
         return "couldn't find any song matched"
-    simplify_singers( ses)
-    return json.dumps( ses, True, False, indent=4)
+    newses = [ simplify_singers(se) for se in ses]
+    return json.dumps( newses, True, False, indent=4)
 
 
 @route('/mytable')
@@ -59,6 +60,13 @@ def createtab():
     return output
 
 import sys,songdb
+import ConfigParser
+
 systemdb = songdb.songdb( sys.argv[1] )
+config = ConfigParser.RawConfigParser()
+config.read('karaserv.cfg')
+
 debug(True)
-run(  port=8080)
+host=config.get('network', 'host')
+port=config.getint('network', 'port')
+run( host=host,  port=port)
