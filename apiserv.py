@@ -2,6 +2,12 @@ import json,urllib
 from bottle import route, run, template, request, response, error,debug
 import songdb
 
+
+def simplify_singers( ses):
+    for se in ses:
+        newsinger = '&'.join(se['singer'])
+        se['singer']=newsinger
+
 @route('/qsong', method='GET')
 def qsong():
     print 'querystring=', request.query_string
@@ -17,6 +23,7 @@ def qsong():
     if len(ses)==0:
         return 'Error: not found' 
         #raise HTTPError(code=403)
+    simplify_singers(ses)
     return json.dumps( ses, True, False, indent=4)
 
 @route('/qsinger', method='GET')
@@ -42,6 +49,7 @@ def searchsong():
     ses = systemdb.search( qval, field=f)
     if len(ses)==0:
         return "couldn't find any song matched"
+    simplify_singers( ses)
     return json.dumps( ses, True, False, indent=4)
 
 
