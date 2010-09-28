@@ -41,7 +41,7 @@ def qsinger():
 
 @route('/search', method='GET')
 def searchsong():
-    for f in ['name', 'singer']:
+    for f in ['name', 'singer', 'any']:
         qval = request.GET.get( f , '').strip()
         if qval:
             break

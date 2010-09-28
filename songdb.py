@@ -78,11 +78,11 @@ class songdb:
     def querybysinger( self, singer):
         self.query( singer, 'singer')
         
-    def search( self, data, field='all'):
-        if field not in [ 'name', 'singer', 'all']:
+    def search( self, data, field='any'):
+        if field not in [ 'name', 'singer', 'any']:
             raise ValueError, 'Can not grep on field {0}'.format(field)
         recs=[]
-        if field=='all':
+        if field=='any':
             for song in self.songs:
                 if data in song['name']:
                     recs.append(song)
