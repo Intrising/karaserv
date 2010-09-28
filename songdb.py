@@ -8,18 +8,15 @@ class songdb:
         songs = []
         singers = []
         fh = open( fn, 'rt')
-        fh.seek(3)
-        #import locale
-        #locale.getdefaultlocale()[1]
         for line in fh:
             d = line.split('\t')
             try:
-                field_data = [ int(d[0]), d[1], d[2], d[3].strip(' '), int(d[4]), int(d[5]), int(d[6])]
+                field_data = [ int(d[0]), d[1], d[2], d[3], int(d[4]), int(d[5]), int(d[6])]
             except ValueError:
                 print 'error is ', d
                 continue
             song = dict( zip( self.fieldnames, field_data))
-            song['singer'] = song['singer'].split('\xe3\x80\x81')
+            song['singer'] = song['singer'].split('&')
             #song = field_data
             songs.append(song)
             for singer in song['singer']:
