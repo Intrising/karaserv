@@ -78,11 +78,19 @@ class songdb:
     def querybysinger( self, singer):
         self.query( singer, 'singer')
         
-    def search( self, data, field='name'):
-        if field not in [ 'name', 'singer']:
+    def search( self, data, field='all'):
+        if field not in [ 'name', 'singer', 'all']:
             raise ValueError, 'Can not grep on field {0}'.format(field)
         recs=[]
-        if field=='singer':
+        if field=='all':
+            for song in self.songs:
+                if data in song['name']:
+                    recs.append(song)
+                else:
+                    singerlstr = ''.join(song['singer'])
+                    if data in singerlstr:
+                        recs.append( song)
+        elif field=='singer':
             for song in self.songs:
                 singerlstr = ''.join(song['singer'])
                 if data in singerlstr:
@@ -97,7 +105,8 @@ class songdb:
         return [song[field] for song in self.songs]
         
     def descstr( self, se):
-        return '{0}: {1}, {2}'.format( se['sno'], se['name'], se['singer'])
+        singerlstr = ''.join(se['singer'])
+        return '{0}: {1} by {2}'.format( se['sno'], se['name'], singerlstr)
 
     def dumpjson( self):
         import json
@@ -149,6 +158,12 @@ if __name__ == '__main__':
                 print( db.descstr(se))
 
     def searchtest(db):
+        qstr = raw_input('please input any string for search:')
+        ses = db.search( qstr)
+        for se in ses:
+            print( '\t'+db.descstr(se))
+
+    def searchtest2(db):
         qstr = raw_input('please input song name for search:')
         ses = db.search( qstr, 'name')
         for se in ses:
