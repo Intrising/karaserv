@@ -1,5 +1,5 @@
 class songdb:
-    fieldnames=[ 'sno', 'gender', 'name', 'singer', 'lang', 'nwords', 'stype']
+    fieldnames=[ 'sno', 'gender', 'name', 'singer', 'lang', 'nwords', 'stype', 'photourl']
     numfields=['sno', 'lang', 'nwords', 'stype']
     def __init__(self, fn='songu.csv'):
         self.load( fn)
@@ -11,7 +11,14 @@ class songdb:
         for line in fh:
             d = line.split('\t')
             try:
-                field_data = [ int(d[0]), d[1], d[2], d[3], int(d[4]), int(d[5]), int(d[6])]
+                if len(d)>=7:
+                    field_data = [ int(d[0]), d[1], d[2], d[3], int(d[4]), int(d[5]), int(d[6]), d[7]]
+                elif len(d)>=6:
+                    field_data = [ int(d[0]), d[1], d[2], d[3], int(d[4]), int(d[5]), int(d[6])]
+                    d.append('')
+                else:
+                    print 'error line({0} tokens):'.format( len(d), line)
+                    continue
             except ValueError:
                 print 'error is ', d
                 continue
