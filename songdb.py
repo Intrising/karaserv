@@ -1,5 +1,5 @@
 class songdb:
-    fieldnames=[ 'sno', 'gender', 'name', 'singer', 'lang', 'nwords', 'stype', 'photourl']
+    fieldnames=[ 'sno', 'gender', 'name', 'singer', 'lang', 'nwords', 'stype', 'photourl', 'mvfn']
     numfields=['sno', 'lang', 'nwords', 'stype']
     def __init__(self, fn='songu.csv'):
         self.load( fn)
@@ -9,16 +9,12 @@ class songdb:
         singers = []
         fh = open( fn, 'rt')
         for line in fh:
+            line = line.strip('\r\n')
             d = line.split('\t')
+            for i in range(len(d), 9):
+                d.append('')
             try:
-                if len(d)>=7:
-                    field_data = [ int(d[0]), d[1], d[2], d[3], int(d[4]), int(d[5]), int(d[6]), d[7]]
-                elif len(d)>=6:
-                    field_data = [ int(d[0]), d[1], d[2], d[3], int(d[4]), int(d[5]), int(d[6])]
-                    d.append('')
-                else:
-                    print 'error line({0} tokens):'.format( len(d), line)
-                    continue
+                field_data = [ int(d[0]), d[1], d[2], d[3], int(d[4]), int(d[5]), int(d[6]), d[7], d[8]]
             except ValueError:
                 print 'error is ', d
                 continue
@@ -45,7 +41,7 @@ class songdb:
 
     def dump(self):
         for song in self.songs:
-            print ('{sno}\t{gender}\t{name}\t{singer}\t{lang}\t{nwords}\t{stype}'.format( sno=song['sno'], gender=song['gender'], name=song['name'], singer=song['singer'], lang=song['lang'], nwords=song['nwords'], stype=song['stype']))
+            print ('{sno}\t{gender}\t{name}\t{singer}\t{lang}\t{nwords}\t{stype}\t{photourl}\t{mvfn}'.format( sno=song['sno'], gender=song['gender'], name=song['name'], singer='&'.join(song['singer']), lang=song['lang'], nwords=song['nwords'], stype=song['stype'], photourl=song['photourl'], mvfn=song['mvfn']))
 
     def dump_singers( self):
         for singer in self.singers:
