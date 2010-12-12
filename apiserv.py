@@ -7,7 +7,10 @@ def simplify_singers( se):
     se['singer'] = '&'.join( se['singer'])
 
 def add_mvurl(se):
-    se['mvurl']= 'http://175.41.182.66:8080/getmv?v={0}'.format(se['mvfn'])
+    if se['mvfn']:
+        se['mvurl']='http://175.41.182.66:8080/getmv?v={0}'.format(se['mvfn'])
+    else
+        se['mvurl']=''
 
 def fix_song_entry( se):
     newse = se.copy()
