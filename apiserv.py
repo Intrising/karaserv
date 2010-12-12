@@ -4,10 +4,17 @@ import songdb
 
 
 def simplify_singers( se):
+    se['singer'] = '&'.join( se['singer'])
+
+def add_mvurl(se):
+    se['mvurl']= 'http://175.41.182.66:8080/getmv?v={0}'.format(se['mvfn'])
+
+def fix_song_entry( se):
     newse = se.copy()
-    newse['singer'] = '&'.join( se['singer'])
+    simplify_singers( newse)
+    add_mvurl( newse)
     return newse
-        
+   
 
 @route('/qsong', method='GET')
 def qsong():
@@ -24,7 +31,7 @@ def qsong():
     if len(ses)==0:
         return 'Error: not found' 
         #raise HTTPError(code=403)
-    newses = [ simplify_singers(se) for se in ses]
+    newses = [ fix_song_entry(se) for se in ses]
     return json.dumps( newses, True, False, indent=4)
 
 @route('/qsinger', method='GET')
@@ -50,7 +57,7 @@ def searchsong():
     ses = systemdb.search( qval, field=f)
     if len(ses)==0:
         return "couldn't find any song matched"
-    newses = [ simplify_singers(se) for se in ses]
+    newses = [ fix_song_entry(se) for se in ses]
     return json.dumps( newses, True, False, indent=4)
 
 
