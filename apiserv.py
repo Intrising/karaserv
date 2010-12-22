@@ -9,7 +9,7 @@ def simplify_singers( se):
 def add_mvurl(se):
     if se['mvfn']:
         se['mvurl']='http://175.41.182.66:8080/getmv?v={0}'.format(se['mvfn'])
-    else
+    else:
         se['mvurl']=''
 
 def fix_song_entry( se):
@@ -63,6 +63,59 @@ def searchsong():
     newses = [ fix_song_entry(se) for se in ses]
     return json.dumps( newses, True, False, indent=4)
 
+
+import session
+from common_response import errtmpl, oktmpl, check_params,check_token
+
+@route('/login')
+@check_params()
+def login( access_token):
+    try:
+        ret = session.login( access_token) 
+    except Exception as e:
+        return errtmpl( '{0}:{1}'.format( type(e), e))
+    return oktmpl(ret )
+
+@route('/logout')
+@check_params()
+def logout( access_token):
+    try:
+        session.logout( access_token)
+    except Exception as e:
+        return errtmpl( '{0}:{1}'.format( type(e), e))
+    return oktmpl()
+
+@route('/plins')
+@check_token()
+@check_params()
+def playlist_insert( access_token, sno, pos=0):
+    session.playlist_insert( access_token, sno, pos)
+    return oktmpl('')
+
+@route('/pldel')
+@check_token()
+@check_params()
+def playlist_delete( access_token, pos=999):
+    session.playlist_delete( access_token, pos) 
+    return oktmpl()
+
+@route('/plset')
+@check_token()
+@check_params()
+def playlist_set( access_token):
+    return oktmpl('')
+
+@route('/plget')
+@check_token()
+@check_params()
+def playlist_get( access_token ):
+    snolist= session.playlist_get( access_token) 
+    return oktmpl( {'playlist': snolist})
+
+
+@route('/listusers')
+def listusers():
+    pass
 
 @route('/mytable')
 def createtab():
