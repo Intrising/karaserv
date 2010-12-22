@@ -72,15 +72,51 @@ def login( token):
 def logout( token):
     try:
         sess = sesstbl.pop(token)
-        profile=sess['profile']
+        user_prof= sess['profile']
         timetup = (sess['login_since'], time.time())
         logmsg = '{0}~{1}'.format( time.ctime(sess['login_since']), time.ctime())
-        print '{0} logged out.  {1}'.format( profile['name'], logmsg)
-        profile['logons'].append( timetup)
-        userdb_set( profile['uid'], profile)
+        print '{0} logged out.  {1}'.format( user_prof['name'], logmsg)
+        user_prof['logons'].append( timetup)
+        userdb_set( user_prof['uid'], user_prof)
     except KeyError:
         pass
     userdb_save()
+
+def token2uprof( token):
+    sess = sesstbl[token]
+    return sess['profile']
+
+def playlist_insert( token, sno, pos=999):
+    uprof = token2uprof( token)
+    playlist = uprof['playlist']
+    playlist.insert(pos, sno)
+
+def playlist_delete( token, pos=0):
+    uprof = token2uprof( token)
+    playlist = uprof['playlist']
+    return playlist.pop(pos)
+   
+def playlist_set( token, playlist):
+    uprof = token2uprof( token)
+    uprof['playlist'] = playlist
+
+def playlist_get( token):
+    uprof = token2uprof( token)
+    return uprof['playlist']
+
+def playhistory_get( token):
+    uprof = token2uprof( token)
+    return uprof['play_history']
+
+def playhistory_add( token, sno):
+    uprof = token2uprof( token)
+    uprof['play_history'].append( sno)
+    userdb_set( uprof['uid'], uprof)
+
+def playhistory_clean( token):
+    uprof = token2uprof( token)
+    uprof['play_history'] = []
+
 
 if __name__ == '__main__':
     def load_actoken():
@@ -91,7 +127,32 @@ if __name__ == '__main__':
     def test1():
         actoken = load_actoken()
         sess = login( actoken)
-        session_list()
+        plist = playlist_get( actoken)
+        print 'last list = ',plist
+        #playlist_set( actoken, [])
+        #plist = playlist_get( actoken)
+        print 'current list = ',plist
+        playlist_insert( actoken, 82886)
+        playlist_insert( actoken, 16817)
+        playlist_insert( actoken, 56019, 0)
+        playlist_insert( actoken, 56069, 1)
+        plist = playlist_get( actoken)
+        print 'current list = ',plist
+        playlist_delete( actoken)
+        playlist_delete( actoken, 2)
+        plist = playlist_get( actoken)
+        print 'current list = ',plist
         logout(actoken)
         userdb_dump()
-    test1()
+
+    def test2():
+        actoken = load_actoken()
+        sess = login( actoken)
+        print 'got session data', sess
+        playhistory_add( actoken, 82886)
+        playhistory_add( actoken, 16817)
+        playhistory_add( actoken, 56019)
+        logout(actoken)
+        userdb_dump()
+
+    test2()
