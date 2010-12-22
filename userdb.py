@@ -13,12 +13,13 @@ def userdb_register( user_scprof):
     #user profile is firstly stolen from his social network
     user_prof = user_scprof.copy()
     #then add our own specific stuff
-    user_prof['register_when'] = time.time()
+    user_prof['register_date'] = time.time()
     user_prof['playlist']= []
-    user_prof['history']=[]
-    user_prof['paidwhen']=[]
+    user_prof['play_history']=[]
+    user_prof['paid_date']=[]
     user_prof['logons']=[]
     guserdb[uid] = user_prof
+    return guserdb[uid]
 
 def userdb_set( uid, user_prof):
     guserdb[uid]=user_prof
