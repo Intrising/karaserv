@@ -7,31 +7,31 @@ def queryuser_facebook( token):
     fburl='https://graph.facebook.com/me?access_token={0}'.format(token)
     af=urllib.urlopen( fburl)
     udic=json.load(af)
+    if 'error' in udic:
+        raise Exception( 'facebook said: '+ udic['error']['message'])
     return udic
 
 #TODO: support more social networks
 def scnet_query( token):
     sctoken, scnet= token.split( '@')
     if scnet=='fb':
-        try:
-            udic = queryuser_facebook(sctoken)
-        except:
-            raise Exception( 'invalid token')
+        udic = queryuser_facebook(sctoken)
     else:
-        raise Exception( 'no such social network:'+scnet)
+        raise Exception( 'unknown social network:'+scnet)
     #TODO: design a abstract class to unify user profile from 
     #every social network
     udic['uid']='{0}/{1}'.format( scnet, udic['id'])
     return udic
 
-def token_format_valid( token):
+def check_token_format( token):
     try:
         token, scnet = token.split( '@')
-        if (scnet!='fb') | (len(token)<5):
-            return False
+        if scnet!='fb':
+            return Exception('unknown social network:'+scnet)
+        if len(token)<5:
+            return Exception('token {0} looks strange:'.format(token))
     except ValueError:
-        return False
-    return True
+        raise Exception('you must specify social network via @')
 
 sesstbl=dict()
 def session_new( token, uprof):
@@ -46,41 +46,48 @@ def session_list():
     
 #there are many cases upon the login procedure
 def login( token):
-    if not token_format_valid( token):
-        raise Exception('incorrect token format ')
+    check_token_format( token)
     #check if he has been logged in, or not
-    try:
-        sess = sesstbl[token]
-    except KeyError:
-        pass
+    if token in sesstbl:
+        uprof = token2uprof( token)
+        msg = '{0} relogin'.format( uprof['name'])
+        print msg
+        return {'OK': msg}
 
     #if not, let's query his basic profile throught his social network
     user_scprof = scnet_query( token)
     #if nothing found, there must be something wrong in his token
-    if user_scprof == None:
-        raise Exception('invalid token')
+    #if user_scprof == None:
+    #    raise Exception('invalid token')
    
     #we got his basic profile, let's check if he has been registered
     user_prof = userdb_query( user_scprof['uid'])
     #if not, register for him first
-    if user_prof == None:
+    if user_prof:
+        msg = '{0} login'.format( user_prof['name'])
+    else:    
         user_prof = userdb_register( user_scprof)
-
+        msg = '{0} registered'.format( user_prof['name'])
+    print msg
     #create a new session for him
-    return session_new( token, user_prof)
+    session_new( token, user_prof)
+    return { 'OK': msg}
 
 def logout( token):
-    try:
+    try: 
         sess = sesstbl.pop(token)
-        user_prof= sess['profile']
-        timetup = (sess['login_since'], time.time())
-        logmsg = '{0}~{1}'.format( time.ctime(sess['login_since']), time.ctime())
-        print '{0} logged out.  {1}'.format( user_prof['name'], logmsg)
-        user_prof['logons'].append( timetup)
-        userdb_set( user_prof['uid'], user_prof)
-    except KeyError:
-        pass
+    except KeyError as e:
+        raise Exception( 'you must login before logout')
+    user_prof= sess['profile']
+    timetup = (sess['login_since'], time.time())
+    logmsg = '{0}~{1}'.format( time.ctime(sess['login_since']), time.ctime())
+    print '{0} logged out.  {1}'.format( user_prof['name'], logmsg)
+    user_prof['logons'].append( timetup)
+    userdb_set( user_prof['uid'], user_prof)
     userdb_save()
+
+def token_valid( token):
+    return token in sesstbl
 
 def token2uprof( token):
     sess = sesstbl[token]
