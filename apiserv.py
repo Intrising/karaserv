@@ -1,5 +1,5 @@
 import json,urllib
-from bottle import route, run, template, request, response, error,debug
+from bottle import route, run, template, request, response, error, redirect,debug
 import songdb
 
 
@@ -117,11 +117,11 @@ def playlist_get( access_token ):
 def listusers():
     pass
 
-import aws
+import awsutils
 @route('/getmv')
 @check_params()
 def getmv(v, fmt='orig'):
-    return redirect( aws.aws_get_mvurl( v,fmt))
+    return redirect( awsutils.aws_get_mvurl( v,fmt))
 
 @route('/mytable')
 def createtab():
@@ -134,7 +134,6 @@ import ConfigParser
 systemdb = songdb.songdb( sys.argv[1] )
 config = ConfigParser.RawConfigParser()
 config.read('karaserv.cfg')
-aws.aws_init()
 debug(True)
 host=config.get('network', 'host')
 port=config.getint('network', 'port')
