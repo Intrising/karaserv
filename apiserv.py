@@ -8,7 +8,7 @@ def simplify_singers( se):
 
 def add_mvurl(se):
     if se['mvfn']:
-        se['mvurl']='http://175.41.182.66:8080/getmv?v={0}'.format(se['mvfn'])
+        se['mvurl']='http://kemity.game-server.cc:8080/getmv?v={0}'.format(se['mvfn'])
     else:
         se['mvurl']=''
 
@@ -117,6 +117,12 @@ def playlist_get( access_token ):
 def listusers():
     pass
 
+import aws
+@route('/getmv')
+@check_params()
+def getmv(v, fmt='orig'):
+    return redirect( aws.aws_get_mvurl( v,fmt))
+
 @route('/mytable')
 def createtab():
     output = template('make_table', rows=['i', 'dont',  'care'])
@@ -128,8 +134,9 @@ import ConfigParser
 systemdb = songdb.songdb( sys.argv[1] )
 config = ConfigParser.RawConfigParser()
 config.read('karaserv.cfg')
-
+aws.aws_init()
 debug(True)
 host=config.get('network', 'host')
 port=config.getint('network', 'port')
+
 run( host=host,  port=port)
