@@ -121,7 +121,20 @@ import awsutils
 @route('/getmv')
 @check_params()
 def getmv(v, fmt='orig'):
-    return redirect( awsutils.aws_get_mvurl( v,fmt))
+    vurl = awsutils.aws_get_mvurl( v,fmt)
+    if vurl:    
+        return redirect(vurl)
+    else:    
+        return errtmpl( 'no such mv')
+
+@route('/getau')
+@check_params()
+def getau( a ):
+    aurl = awsutils.aws_get_auurl( a)
+    if aurl:
+        return redirect( aurl)
+    else:
+        return errtmpl( 'no such audio')
 
 @route('/mytable')
 def createtab():

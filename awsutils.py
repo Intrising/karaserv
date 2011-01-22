@@ -10,14 +10,20 @@ def aws_connect():
     return boto.connect_s3( access_key, secret_key)
 
 def aws_get_mvurl( v, fmt):
-    k = mvbkt.get_key('mvsong/{0}/{1}.mp4'.format( fmt, v));
-    return k.generate_url( 60)
- 
+    k = mvbkt.get_key('mvsong/{0}/{1}.mp4'.format( fmt, v))
+    if k:
+        return k.generate_url( 60)
+
+def aws_get_auurl( a):
+    k = mvbkt.get_key('ausong/{0}.mp3'.format( a))
+    if k:
+        return k.generate_url( 60)
+
+   
 def aws_close():
     mvbkt.close()
     s3conn.close()
 
 s3conn= aws_connect()
 mvbkt = s3conn.get_bucket('mdsmv')
-
 
