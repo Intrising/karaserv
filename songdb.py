@@ -14,7 +14,7 @@ class songdb:
             for i in range(len(d), 9):
                 d.append('')
             try:
-                field_data = [ int(d[0]), d[1], d[2], d[3], int(d[4]), int(d[5]), int(d[6]), d[7], d[8]]
+                field_data = [ int(d[0]), d[1], d[2], d[3], int(d[4]), int(d[5]), d[6], d[7], d[8]]
             except ValueError:
                 print 'error is ', d
                 continue
