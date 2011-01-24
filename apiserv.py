@@ -8,14 +8,17 @@ def simplify_singers( se):
 
 def add_songurl(se):
     if se['songfn']:
-		if se['stype']=='mv':
-	        servertmpl='http://kemity.game-server.cc:8080/getmv?v={0}'
-    	elif se['stype']=='au':
-			servertmpl='http://kemity.game-server.cc:8080/getau?v={0}'
-		elif se['stype']=='midi':
-			servertmpl='http://kemity.game-server.cc:8080/getmidi?v={0}'
-		se['songurl']=servertmpl.format( se['songfn']) 
-	else:
+        if se['stype']=='mv':
+            servertmpl='http://kemity.game-server.cc:8080/getmv?v={0}'
+            se['songurl']=servertmpl.format( se['songfn']) 
+        elif se['stype']=='au':
+            servertmpl='http://kemity.game-server.cc:8080/getau?a={0}'
+            se['songurl']=servertmpl.format( se['songfn'])
+            se['lyricurl']=se['songurl']+'&lyric=1'
+        elif se['stype']=='midi':
+            servertmpl='http://kemity.game-server.cc:8080/getmidi?v={0}'
+            se['songurl']=servertmpl.format( se['songfn']) 
+    else:
         se['songurl']=''
 
 def fix_song_entry( se):
@@ -135,8 +138,8 @@ def getmv(v, fmt='orig'):
 
 @route('/getau')
 @check_params()
-def getau( a ):
-    aurl = awsutils.aws_get_auurl( a)
+def getau( a, lyric=0):
+    aurl = awsutils.aws_get_auurl(a, lyric)
     if aurl:
         return redirect( aurl)
     else:

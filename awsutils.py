@@ -14,12 +14,15 @@ def aws_get_mvurl( v, fmt):
     if k:
         return k.generate_url( 60)
 
-def aws_get_auurl( a):
-    k = mvbkt.get_key('ausong/{0}.mp3'.format( a))
+def aws_get_auurl( a, lyric):
+    if lyric>0:
+        fn='{0}.js'.format(a)
+    else:
+        fn='{0}.mp3'.format(a)
+    k = mvbkt.get_key('ausong/'+fn)
     if k:
         return k.generate_url( 60)
 
-   
 def aws_close():
     mvbkt.close()
     s3conn.close()
