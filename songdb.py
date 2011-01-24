@@ -1,6 +1,6 @@
 class songdb:
-    fieldnames=[ 'sno', 'gender', 'name', 'singer', 'lang', 'nwords', 'stype', 'photourl', 'mvfn']
-    numfields=['sno', 'lang', 'nwords', 'stype']
+    fieldnames=[ 'sno', 'gender', 'name', 'singer', 'lang', 'nwords', 'stype', 'photourl', 'songfn']
+    numfields=['sno', 'lang', 'nwords']
     def __init__(self, fn='songu.csv'):
         self.load( fn)
 
@@ -28,7 +28,14 @@ class songdb:
         self.songs = songs
         self.singers = singers
         fh.close()
-    
+    def calc_nsongs( self):
+        nmvs=0
+        for song in self.songs:
+            if len(song['songfn'])>0:
+                print song['songfn']
+                nmvs+=1
+        print '{0} mvs of {0} songs'.format( nmvs, len(self.songs))
+
     def add_singer( self, allsingers, singername, gender, lang):
         for singer in allsingers:
             if singername == singer['name']:
@@ -41,7 +48,7 @@ class songdb:
 
     def dump(self):
         for song in self.songs:
-            print ('{sno}\t{gender}\t{name}\t{singer}\t{lang}\t{nwords}\t{stype}\t{photourl}\t{mvfn}'.format( sno=song['sno'], gender=song['gender'], name=song['name'], singer='&'.join(song['singer']), lang=song['lang'], nwords=song['nwords'], stype=song['stype'], photourl=song['photourl'], mvfn=song['mvfn']))
+            print ('{sno}\t{gender}\t{name}\t{singer}\t{lang}\t{nwords}\t{stype}\t{photourl}\t{songfn}'.format( sno=song['sno'], gender=song['gender'], name=song['name'], singer='&'.join(song['singer']), lang=song['lang'], nwords=song['nwords'], stype=song['stype'], photourl=song['photourl'], songfn=song['songfn']))
 
     def dump_singers( self):
         for singer in self.singers:
@@ -193,9 +200,23 @@ if __name__ == '__main__':
         for singer in singers:
             print singer['name']
 
+    """
+    def change_stype( db):
+        stype=''
+        for song in db.songs:
+            if len(song['mvfn'])>0:
+                if song['sno']>=14000 and song['sno']<15000:
+                    stype='au'
+                else:
+                    stype='mv'
+            else:
+                stype='midi'
+            song['stype']=stype
+    """
     db = songdb(sys.argv[1])
-    searchtest(db)
+    #change_stype(db)
+    #db.dump()
+    #db.calc_nsongs()
     #list_singers_by_lang( db)
     #list_singers_by_gender(db)
     #list_all_singers(db)
-

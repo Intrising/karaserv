@@ -6,16 +6,22 @@ import songdb
 def simplify_singers( se):
     se['singer'] = '&'.join( se['singer'])
 
-def add_mvurl(se):
-    if se['mvfn']:
-        se['mvurl']='http://kemity.game-server.cc:8080/getmv?v={0}'.format(se['mvfn'])
-    else:
-        se['mvurl']=''
+def add_songurl(se):
+    if se['songfn']:
+		if se['stype']=='mv':
+	        servertmpl='http://kemity.game-server.cc:8080/getmv?v={0}'
+    	elif se['stype']=='au':
+			servertmpl='http://kemity.game-server.cc:8080/getau?v={0}'
+		elif se['stype']=='midi':
+			servertmpl='http://kemity.game-server.cc:8080/getmidi?v={0}'
+		se['songurl']=servertmpl.format( se['songfn']) 
+	else:
+        se['songurl']=''
 
 def fix_song_entry( se):
     newse = se.copy()
     simplify_singers( newse)
-    add_mvurl( newse)
+    add_songurl( newse)
     return newse
    
 
