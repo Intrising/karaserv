@@ -145,6 +145,17 @@ def getau( a, lyric=0):
     else:
         return errtmpl( 'no such audio')
 
+@route('/getbg')
+@check_params()
+def getbg( v, fmt='orig' ):
+    vurl = awsutils.aws_get_bgurl(v,fmt)
+    if vurl:
+        return redirect( vurl)
+    else:
+        return errtmpl( 'no such background')
+
+
+
 @route('/mytable')
 def createtab():
     output = template('make_table', rows=['i', 'dont',  'care'])

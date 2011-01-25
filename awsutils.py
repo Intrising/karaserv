@@ -9,7 +9,7 @@ def aws_connect():
     secret_key=config.get('Credentials', 'secret_key')
     return boto.connect_s3( access_key, secret_key)
 
-def aws_get_mvurl( v, fmt):
+def aws_get_mvurl( v, fmt='orig'):
     k = mvbkt.get_key('mvsong/{0}/{1}.mp4'.format( fmt, v))
     if k:
         return k.generate_url( 60)
@@ -22,6 +22,12 @@ def aws_get_auurl( a, lyric):
     k = mvbkt.get_key('ausong/'+fn)
     if k:
         return k.generate_url( 60)
+
+def aws_get_bgurl( v, fmt='orig'):
+    k = mvbkt.get_key('bgvideo/{0}/{1}.mp4'.format( fmt, v))
+    if k:
+        return k.generate_url( 60)
+
 
 def aws_close():
     mvbkt.close()
