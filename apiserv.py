@@ -157,11 +157,15 @@ def getbg( v, fmt='orig' ):
 @route('/tdquery')
 @check_params()
 def tdquery( qid='' ):
-	import tdmenu
-	if qid=='top':
-		qid=''
-	r = tdmenu.run_menu( qid)	
-	return json.dumps( r, True, False, indent=4)
+    import tdmenu
+    if qid=='top':
+        qid=''
+    if len(qid)==0:
+        qds=[]
+    else:    
+        qds = qid.split('_')    
+    r = tdmenu.run_menu( qds )
+    return json.dumps( r, True, False, indent=4)
     #return errtmpl( 'no such background')
 
 
