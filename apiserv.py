@@ -160,8 +160,9 @@ def tdquery( qid='' ):
 	import tdmenu
 	if qid=='top':
 		qid=''
-	return tdmenu.run_menu( qid)	
-	#return errtmpl( 'no such background')
+	r = tdmenu.run_menu( qid)	
+	return json.dumps( r, True, False, indent=4)
+    #return errtmpl( 'no such background')
 
 
 
