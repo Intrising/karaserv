@@ -154,6 +154,15 @@ def getbg( v, fmt='orig' ):
     else:
         return errtmpl( 'no such background')
 
+@route('/tdquery')
+@check_params()
+def tdquery( qid='' ):
+	import tdmenu
+	if qid=='top':
+		qid=''
+	return tdmenu.run_menu( qid)	
+	#return errtmpl( 'no such background')
+
 
 
 @route('/mytable')
