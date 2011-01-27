@@ -1,19 +1,29 @@
 import intlmsgs
 from songdb import systemdb
 
+def shrink_range( rlist, selrange):
+    l = len(rlist)
+    lb, ub=selrange
+    return rlist[lb:ub]
+
 class qrybase:
     datas=[]
     def items( self):
         return self.datas
-    def query( self, d):
+    def query( self, d, qrange=(0,20)):
         if isinstance( d, str):
-            r = self.func( int(d))
+            allr = self.func( int(d))
         else:
-            r = self.func(d)
-        if r['rtype']=='song':
-            for song in r['rdata']:
-                song['singer'] = '&'.join( song['singer'])
-        return r
+            allr = self.func(d)
+        subr= { 'rtype':allr['rtype'], 'rdata':[]}
+        lb,ub=qrange
+        for rd in allr['rdata'][lb:ub]:
+            if subr['rtype']=='song':
+                newse = rd.copy()
+                newse['singer'] = '&'.join( newse['singer'])
+                rd=newse
+            subr['rdata'].append(rd)
+        return subr
 
 class qry_singer(qrybase):
     def __init__(self):
