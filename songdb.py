@@ -72,11 +72,14 @@ class songdb:
    
     def ismatch( self, song, qexprs):
         for field,val in qexprs.items():
-            if song[field]<>val:
+            if field=='singer':
+                if val not in song[field]:
+                    return False
+            elif song[field]<>val:
                 return False
         return True        
 
-    def multiquery( self, qexprs):
+    def mquery( self, qexprs):
         recs=[]
         for song in self.songs:
             if self.ismatch( song, qexprs):
@@ -91,7 +94,7 @@ class songdb:
         if field=='langs' and type(data)==str:
             data=int(data)
         return [singer for singer in self.singers if data in singer[field]]
-        
+
     def querybyname( self, name):
         self.query( name, 'name')
 
@@ -216,7 +219,7 @@ if __name__ == '__main__':
             print singer['name']
 
     def test_chinese_nwords( db):
-        songs = db.multiquery( { 'lang':1, 'nwords':10})
+        songs = db.mquery( { 'lang':1, 'nwords':10})
         for song in songs:
             print song['name']
     """
