@@ -1,7 +1,6 @@
 import json,urllib
 from bottle import route, run, template, request, response, error, redirect,debug
-import songdb
-
+from songdb import systemdb
 
 def simplify_singers( se):
     se['singer'] = '&'.join( se['singer'])
@@ -31,7 +30,7 @@ def fix_song_entry( se):
 @route('/qsong', method='GET')
 def qsong():
     print 'querystring=', request.query_string
-    for f in songdb.songdb.fieldnames:
+    for f in systemdb.fieldnames:
         qval = request.GET.get( f , '').strip()
         if qval:
             break
@@ -175,10 +174,9 @@ def createtab():
     output = template('make_table', rows=['i', 'dont',  'care'])
     return output
 
-import sys,songdb
+import sys
 import ConfigParser
 
-systemdb = songdb.songdb( sys.argv[1] )
 config = ConfigParser.RawConfigParser()
 config.read('karaserv.cfg')
 debug(True)
