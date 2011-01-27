@@ -6,7 +6,7 @@ intlmsgs.initpo()
 _ = intlmsgs.gettext
 
 def qry2menu( qry):
-	return OrderedDict([( d, qry.func) for d in qry.items()])
+	return OrderedDict([( d, qry.query) for d in qry.items()])
 	
 
 menu_top = OrderedDict([
@@ -14,6 +14,9 @@ menu_top = OrderedDict([
         ('chinese', qry2menu( songqrys.qry_chinese())), 
         ('taiwanese', qry2menu( songqrys.qry_taiwanese())),
         ('english', qry2menu( songqrys.qry_english())),
+        ('japanese', qry2menu( songqrys.qry_japanese())),
+        ('cantonese', qry2menu( songqrys.qry_cantonese())),
+        ('children', qry2menu( songqrys.qry_children())),
     ])),
     ( 'singer', qry2menu( songqrys.qry_singer())),
     ( 'phosym', OrderedDict([
