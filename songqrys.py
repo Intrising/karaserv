@@ -10,7 +10,10 @@ class qrybase:
             r = self.func( int(d))
         else:
             r = self.func(d)
-        return r    
+        if r['rtype']=='song':
+            for song in r['rdata']:
+                song['singer'] = '&'.join( song['singer'])
+        return r
 
 class qry_singer(qrybase):
     def __init__(self):
