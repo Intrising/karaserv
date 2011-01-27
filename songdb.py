@@ -69,6 +69,19 @@ class songdb:
                 if song[field]==data:
                     recs.append(song)
         return recs
+   
+    def ismatch( self, song, qexprs):
+        for field,val in qexprs.items():
+            if song[field]<>val:
+                return False
+        return True        
+
+    def multiquery( self, qexprs):
+        recs=[]
+        for song in self.songs:
+            if self.ismatch( song, qexprs):
+                recs.append(song)
+        return recs
 
     def qsingers( self, field=None, data=None):
         if field==None:
@@ -126,7 +139,9 @@ class songdb:
         for song in self.songs:
             bigstr+=song[field]
         return list(set(bigstr))
-        
+
+systemdb = songdb( 'mdssong.csv')
+
 if __name__ == '__main__':
     import sys,random
 
@@ -200,6 +215,10 @@ if __name__ == '__main__':
         for singer in singers:
             print singer['name']
 
+    def test_chinese_nwords( db):
+        songs = db.multiquery( { 'lang':1, 'nwords':10})
+        for song in songs:
+            print song['name']
     """
     def change_stype( db):
         stype=''
@@ -213,7 +232,8 @@ if __name__ == '__main__':
                 stype='midi'
             song['stype']=stype
     """
-    db = songdb(sys.argv[1])
+    test_chinese_nwords( systemdb)
+    db= systemdb
     #change_stype(db)
     #db.dump()
     #db.calc_nsongs()
