@@ -42,7 +42,7 @@ def mkmaddr( maddr, nd):
 		naddr = str(nd)
 	return '_'.join( naddr)
 	
-def run_menu(  maddr=[]):
+def run_menu(  maddr=[], qrange=(0,20)):
 	m = menu_top
 	title = 'topmenu'
 	for d in maddr:
@@ -55,7 +55,7 @@ def run_menu(  maddr=[]):
 			alist.append( arec)
 		retdic= { 'rtype':'submenu', 'rdata': alist}	
 	else:
-		retdic= m( maddr[-1])
+		retdic= m( maddr[-1], qrange)
 	retdic[ 'title'] = _(title).encode('utf-8')
 	return retdic
 

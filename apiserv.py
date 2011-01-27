@@ -155,15 +155,16 @@ def getbg( v, fmt='orig' ):
 
 @route('/tdquery')
 @check_params()
-def tdquery( qid='' ):
+def tdquery( qid='', qrange="0_20" ):
     import tdmenu
     if qid=='top':
         qid=''
     if len(qid)==0:
         qds=[]
     else:    
-        qds = qid.split('_')    
-    r = tdmenu.run_menu( qds )
+        qds = qid.split('_')
+    qrange=qrange.split('_')
+    r = tdmenu.run_menu( qds, ( int(qrange[0]), int(qrange[1])))
     return json.dumps( r, True, False, indent=4)
     #return errtmpl( 'no such background')
 

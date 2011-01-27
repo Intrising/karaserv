@@ -10,12 +10,12 @@ class qrybase:
     datas=[]
     def items( self):
         return self.datas
-    def query( self, d, qrange=(0,20)):
+    def query( self, d, qrange):
         if isinstance( d, str):
             allr = self.func( int(d))
         else:
             allr = self.func(d)
-        subr= { 'rtype':allr['rtype'], 'rdata':[]}
+        subr= { 'rtype':allr['rtype'], 'rtotal':len(allr['rdata']), 'rdata':[]}
         lb,ub=qrange
         for rd in allr['rdata'][lb:ub]:
             if subr['rtype']=='song':
