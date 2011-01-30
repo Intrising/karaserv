@@ -97,15 +97,21 @@ def logout( access_token):
 @check_token()
 @check_params()
 def playlist_insert( access_token, sno, pos=0):
-    session.playlist_insert( access_token, sno, pos)
-    return oktmpl('')
+    try:
+        session.playlist_insert( access_token, sno, pos)
+    except Exception as e:
+        return errtmpl( '{0}:{1}'.format( type(e), e))
+    return oktmpl({'OK':'{0} inserted'.format( sno)})
 
 @route('/pldel')
 @check_token()
 @check_params()
 def playlist_delete( access_token, pos=999):
-    session.playlist_delete( access_token, pos) 
-    return oktmpl()
+    try:
+        session.playlist_delete( access_token, pos) 
+    except Exception as e:
+        return errtmpl( '{0}:{1}'.format( type(e), e))
+    return oktmpl({'OK':'{0} deleted'.format( sno)})
 
 @route('/plset')
 @check_token()
