@@ -11,6 +11,14 @@ def queryuser_facebook( token):
         raise Exception( 'facebook said: '+ udic['error']['message'])
     return udic
 
+def queryfriends_facebook( token):
+    fburl='https://graph.facebook.com/me/friends?access_token={0}'.format(token)
+    af=urllib.urlopen( fburl)
+    udic=json.load(af)
+    if 'error' in udic:
+        raise Exception( 'facebook said: '+ udic['error']['message'])
+    return udic['data']
+   
 #TODO: support more social networks
 def scnet_query( token):
     sctoken, scnet= token.split( '@')
@@ -97,19 +105,35 @@ def playlist_insert( token, sno, pos=999):
     uprof = token2uprof( token)
     playlist = uprof['playlist']
     playlist.insert(pos, sno)
+    userdb_set( uprof['uid'], uprof)
 
 def playlist_delete( token, pos=0):
     uprof = token2uprof( token)
     playlist = uprof['playlist']
-    return playlist.pop(pos)
+    r= playlist.pop(pos)
+    userdb_set( uprof['uid'], uprof)
+    return r
+
    
 def playlist_set( token, playlist):
     uprof = token2uprof( token)
     uprof['playlist'] = playlist
+    userdb_set( uprof['uid'], uprof)
 
-def playlist_get( token):
+def playlist_get( token, scuid='me'):
     uprof = token2uprof( token)
-    return uprof['playlist']
+    if scuid=='me':
+        return uprof['playlist']
+
+    sctoken, scnet= token.split( '@')
+    if scnet<>'fb':
+        raise Exception( 'unknown social network:'+scnet)
+
+    friends = queryfriends_facebook(sctoken)
+    for f in friends:
+        if f['id']==scuid:
+            friend_prof = userdb_query( 'fb/'+scuid)
+            return friend_prof['playlist']
 
 def playhistory_get( token):
     uprof = token2uprof( token)
