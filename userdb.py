@@ -28,6 +28,9 @@ def userdb_dump():
     import pprint
     pprint.pprint( guserdb)
 
+def userdb_getall():
+    return dict(guserdb)
+
 def userdb_save():
     guserdb.sync()
 
