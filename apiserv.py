@@ -116,14 +116,16 @@ def playlist_set( access_token):
 @route('/plget')
 @check_token()
 @check_params()
-def playlist_get( access_token ):
-    snolist= session.playlist_get( access_token) 
-    return oktmpl( {'playlist': snolist})
+def playlist_get( access_token, uid='me'):
+    snolist= session.playlist_get( access_token, uid) 
+    return oktmpl( { 'playlist': snolist})
 
 
 @route('/listusers')
 def listusers():
-    pass
+    from userdb import userdb_getall
+    udic= userdb_getall()
+    return json.dumps( udic, True, False, indent=4)
 
 import awsutils
 @route('/getmv')
