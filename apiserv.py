@@ -111,7 +111,7 @@ def playlist_delete( access_token, pos=999):
         session.playlist_delete( access_token, pos) 
     except Exception as e:
         return errtmpl( '{0}:{1}'.format( type(e), e))
-    return oktmpl({'OK':'{0} deleted'.format( sno)})
+    return oktmpl({'OK':'{0}th song deleted'.format( pos)})
 
 @route('/plset')
 @check_token()
