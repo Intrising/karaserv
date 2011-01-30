@@ -105,12 +105,16 @@ def playlist_insert( token, sno, pos=999):
     uprof = token2uprof( token)
     if not isinstance( sno, int):
         sno=int(sno)
+    if not isinstance( pos, int):
+        pos=int(pos)
     playlist = uprof['playlist']
     playlist.insert(pos, sno)
     userdb_set( uprof['uid'], uprof)
 
 def playlist_delete( token, pos=0):
     uprof = token2uprof( token)
+    if not isinstance( pos, int):
+        pos=int(pos)
     playlist = uprof['playlist']
     r= playlist.pop(pos)
     userdb_set( uprof['uid'], uprof)
