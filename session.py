@@ -103,6 +103,8 @@ def token2uprof( token):
 
 def playlist_insert( token, sno, pos=999):
     uprof = token2uprof( token)
+    if not isinstance( sno, int):
+        sno=int(sno)
     playlist = uprof['playlist']
     playlist.insert(pos, sno)
     userdb_set( uprof['uid'], uprof)
