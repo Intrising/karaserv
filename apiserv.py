@@ -9,14 +9,14 @@ def add_songurl(se):
     if se['songfn']:
         if se['stype']=='mv':
             servertmpl='http://kemity.game-server.cc:8080/getmv?v={0}'
-            se['songurl']=servertmpl.format( se['songfn']) 
+            se['songurl']=servertmpl.format( se['songfn'])
         elif se['stype']=='au':
             servertmpl='http://kemity.game-server.cc:8080/getau?a={0}'
             se['songurl']=servertmpl.format( se['songfn'])
             se['lyricurl']=se['songurl']+'&lyric=1'
         elif se['stype']=='midi':
             servertmpl='http://kemity.game-server.cc:8080/getmidi?v={0}'
-            se['songurl']=servertmpl.format( se['songfn']) 
+            se['songurl']=servertmpl.format( se['songfn'])
     else:
         se['songurl']=''
 
@@ -25,7 +25,6 @@ def fix_song_entry( se):
     simplify_singers( newse)
     add_songurl( newse)
     return newse
-   
 
 @route('/qsong', method='GET')
 def qsong():
@@ -40,7 +39,7 @@ def qsong():
     qval=urllib.unquote(qval)
     ses = systemdb.query( qval, field=f)
     if len(ses)==0:
-        return 'Error: not found' 
+        return 'Error: not found'
         #raise HTTPError(code=403)
     newses = [ fix_song_entry(se) for se in ses]
     return json.dumps( newses, True, False, indent=4)
@@ -53,7 +52,7 @@ def qsinger():
             break
     singers = systemdb.qsingers( f, qval)
     if len(singers)==0:
-        return 'Error: not found' 
+        return 'Error: not found'
         #raise HTTPError(code=403)
     return json.dumps( singers, True, False, indent=4)
 
@@ -79,7 +78,7 @@ from common_response import errtmpl, oktmpl, check_params,check_token
 @check_params()
 def login( access_token):
     try:
-        ret = session.login( access_token) 
+        ret = session.login( access_token)
     except Exception as e:
         return errtmpl( '{0}:{1}'.format( type(e), e))
     return oktmpl(ret )
@@ -108,7 +107,7 @@ def playlist_insert( access_token, sno, pos=0):
 @check_params()
 def playlist_delete( access_token, pos=999):
     try:
-        session.playlist_delete( access_token, pos) 
+        session.playlist_delete( access_token, pos)
     except Exception as e:
         return errtmpl( '{0}:{1}'.format( type(e), e))
     return oktmpl({'OK':'{0}th song deleted'.format( pos)})
@@ -123,9 +122,11 @@ def playlist_set( access_token):
 @check_token()
 @check_params()
 def playlist_get( access_token, uid='me'):
-    snolist= session.playlist_get( access_token, uid) 
-    return oktmpl( { 'playlist': snolist})
-
+    snolist= session.playlist_get( access_token, uid)
+    allses=[]
+    for sno in snolist:
+        allses.extend( systemdb.query( sno))
+    return oktmpl( { 'playlist': allses})
 
 @route('/listusers')
 def listusers():
@@ -138,9 +139,9 @@ import awsutils
 @check_params()
 def getmv(v, fmt='orig'):
     vurl = awsutils.aws_get_mvurl( v,fmt)
-    if vurl:    
+    if vurl:
         return redirect(vurl)
-    else:    
+    else:
         return errtmpl( 'no such mv')
 
 @route('/getau')
@@ -169,7 +170,7 @@ def tdquery( qid='', qrange="0_20" ):
         qid=''
     if len(qid)==0:
         qds=[]
-    else:    
+    else:
         qds = qid.split('_')
     qrange=qrange.split('_')
     r = tdmenu.run_menu( qds, ( int(qrange[0]), int(qrange[1])))
