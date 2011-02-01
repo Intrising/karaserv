@@ -126,7 +126,7 @@ def playlist_get( access_token, uid='me'):
     allses=[]
     for sno in snolist:
         allses.extend( systemdb.query( sno))
-    return oktmpl( { 'playlist': allses})
+    return json.dumps( allses, True, False, indent=4)
 
 @route('/listusers')
 def listusers():
