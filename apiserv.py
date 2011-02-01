@@ -125,7 +125,9 @@ def playlist_get( access_token, uid='me'):
     snolist= session.playlist_get( access_token, uid)
     allses=[]
     for sno in snolist:
-        allses.extend( systemdb.query( sno))
+        ses = systemdb.query( sno)
+        newse = fix_song_entry( ses[0])
+        allses.append( newse)
     return json.dumps( allses, True, False, indent=4)
 
 @route('/listusers')
