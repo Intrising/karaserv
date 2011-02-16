@@ -126,6 +126,8 @@ def playlist_get( access_token, uid='me'):
     allses=[]
     for sno in snolist:
         ses = systemdb.query( sno)
+        if len(ses)==0:
+            continue
         newse = fix_song_entry( ses[0])
         allses.append( newse)
     return json.dumps( allses, True, False, indent=4)
