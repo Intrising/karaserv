@@ -1,5 +1,5 @@
 import json,urllib
-from bottle import route, run, template, request, response, error, redirect,debug
+from bottle import route, run, template, request, response, error, redirect,debug,send_file
 from songdb import systemdb
 
 def simplify_singers( se):
@@ -182,6 +182,20 @@ def tdquery( qid='', qrange="0_20" ):
     #return errtmpl( 'no such background')
 
 
+@route('/download/:filename')
+def send_static(filename):
+    return send_file(filename, root='testdata')
+
+@route('/doupload', method='POST')
+def do_upload():
+    datafile = request.POST.get('datafile')
+    length = request.content_length
+    return '{0} bytes saved'.format( length)
+    #buf=datafile.file.read()
+
+@route('/upload')
+def upload():
+    return send_file( 'upload.html', root='.')
 
 @route('/mytable')
 def createtab():
