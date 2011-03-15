@@ -36,6 +36,15 @@ class songdb:
                 nmvs+=1
         print '{0} mvs of {0} songs'.format( nmvs, len(self.songs))
 
+    def del_songs( self, snolist):
+        idxlst=[]
+        for i, song in enumerate(self.songs):
+            if song['sno'] in snolist:
+                idxlst.append(i)
+        idxlst.sort(reverse=True)
+        for i in idxlst:
+            self.songs.pop(i)
+
     def add_singer( self, allsingers, singername, gender, lang):
         for singer in allsingers:
             if singername == singer['name']:
@@ -69,7 +78,7 @@ class songdb:
                 if song[field]==data:
                     recs.append(song)
         return recs
-   
+
     def ismatch( self, song, qexprs):
         for field,val in qexprs.items():
             if field=='singer':
@@ -77,7 +86,7 @@ class songdb:
                     return False
             elif song[field]<>val:
                 return False
-        return True        
+        return True
 
     def mquery( self, qexprs):
         recs=[]
@@ -100,7 +109,7 @@ class songdb:
 
     def querybysinger( self, singer):
         self.query( singer, 'singer')
-        
+
     def search( self, data, field='any'):
         if field not in [ 'name', 'singer', 'any']:
             raise ValueError, 'Can not grep on field {0}'.format(field)
@@ -126,7 +135,7 @@ class songdb:
 
     def fielddata( self, field):
         return [song[field] for song in self.songs]
-        
+
     def descstr( self, se):
         singerlstr = ''.join(se['singer'])
         return '{0}: {1} by {2}'.format( se['sno'], se['name'], singerlstr)
@@ -134,7 +143,7 @@ class songdb:
     def dumpjson( self):
         import json
         return json.dumps( self.songs, True, False, indent=4)
-        
+
     def charset( self, field='name'):
         if field not in [ 'name', 'singer']:
             raise ValueError, 'Can not collect char set on field {0}'.format(field)
@@ -172,7 +181,7 @@ if __name__ == '__main__':
             ses = db.querybyname( names[si] )
             for se in ses:
                 print( db.descstr(se))
-   
+
     def qsongbysinger(db):
         print 'qsong by singer'
         singers = db.fielddata('singer')
@@ -197,15 +206,15 @@ if __name__ == '__main__':
         ses = db.search( qstr, 'singer')
         for se in ses:
             print( '\t'+db.descstr(se))
-      
-        
+
+
     def list_singers_by_lang( db):
         for lang in ['1', '2']:
             print 'lang ', lang
             singers = db.qsingers( 'lang', lang)
             for singer in singers:
                 print singer['name']
-        
+
     def list_singers_by_gender( db):
         for gender in ['M', 'F']:
             print 'gender ', gender
@@ -218,10 +227,23 @@ if __name__ == '__main__':
         for singer in singers:
             print singer['name']
 
+    def list_midi_songs( db):
+        ses = db.query( data='midi', field='stype')
+        for se in ses:
+            print( '\t'+db.descstr(se))
+    def testdump(db):
+        db.dump()
+
+    def test_del_songs(db):
+        snos=[81405,330252]
+        db.del_songs( snos)
+        db.dump()
+
     def test_chinese_nwords( db):
         songs = db.mquery( { 'lang':1, 'nwords':10})
         for song in songs:
             print song['name']
+
     """
     def change_stype( db):
         stype=''
@@ -235,8 +257,11 @@ if __name__ == '__main__':
                 stype='midi'
             song['stype']=stype
     """
-    test_chinese_nwords( systemdb)
     db= systemdb
+    #testdump(db)
+    test_del_songs(db)
+    #list_midi_songs( db)
+    #test_chinese_nwords( db)
     #change_stype(db)
     #db.dump()
     #db.calc_nsongs()
