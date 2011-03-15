@@ -1,4 +1,4 @@
-import boto                                                                     
+import boto
 from boto.s3.key import Key
 
 def aws_connect():
@@ -10,7 +10,13 @@ def aws_connect():
     return boto.connect_s3( access_key, secret_key)
 
 def aws_get_mvurl( v, fmt='orig'):
-    k = mvbkt.get_key('mvsong/{0}/{1}.mp4'.format( fmt, v))
+    k = songbkt.get_key('mvsong/{0}/{1}.mp4'.format( fmt, v))
+    if k:
+        return k.generate_url( 60)
+
+def aws_get_midiurl( a):
+    fn='{0}.mm3'.format(a)
+    k = songbkt.get_key('midisong/'+fn)
     if k:
         return k.generate_url( 60)
 
@@ -19,20 +25,20 @@ def aws_get_auurl( a, lyric):
         fn='{0}.js'.format(a)
     else:
         fn='{0}.mp3'.format(a)
-    k = mvbkt.get_key('ausong/'+fn)
+    k = songbkt.get_key('ausong/'+fn)
     if k:
         return k.generate_url( 60)
 
 def aws_get_bgurl( v, fmt='orig'):
-    k = mvbkt.get_key('bgvideo/{0}/{1}.mp4'.format( fmt, v))
+    k = songbkt.get_key('bgvideo/{0}/{1}.mp4'.format( fmt, v))
     if k:
         return k.generate_url( 60)
 
 
 def aws_close():
-    mvbkt.close()
+    songbkt.close()
     s3conn.close()
 
 s3conn= aws_connect()
-mvbkt = s3conn.get_bucket('mdsmv')
+songbkt = s3conn.get_bucket('mdsmv')
 
