@@ -160,7 +160,7 @@ def getau( a, lyric=0):
 @route('/getmidi')
 @check_params()
 def getmidi(a):
-    aurl = awsutils.aws_get_midiurl( a,fmt)
+    aurl = awsutils.aws_get_midiurl( a)
     if aurl:
         return redirect(aurl)
     else:
