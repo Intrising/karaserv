@@ -15,7 +15,7 @@ def add_songurl(se):
             se['songurl']=servertmpl.format( se['songfn'])
             se['lyricurl']=se['songurl']+'&lyric=1'
         elif se['stype']=='midi':
-            servertmpl='http://kemity.game-server.cc:8080/getmidi?v={0}'
+            servertmpl='http://kemity.game-server.cc:8080/getmidi?a={0}'
             se['songurl']=servertmpl.format( se['songfn'])
     else:
         se['songurl']=''
@@ -156,6 +156,16 @@ def getau( a, lyric=0):
         return redirect( aurl)
     else:
         return errtmpl( 'no such audio')
+
+@route('/getmidi')
+@check_params()
+def getmidi(a):
+    aurl = awsutils.aws_get_midiurl( a,fmt)
+    if aurl:
+        return redirect(aurl)
+    else:
+        return errtmpl( 'no such midi')
+
 
 @route('/getbg')
 @check_params()
