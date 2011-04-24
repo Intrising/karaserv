@@ -8,14 +8,14 @@ def simplify_singers( se):
 def add_songurl(se):
     if se['songfn']:
         if se['stype']=='mv':
-            servertmpl='http://kemity.game-server.cc:8080/getmv?v={0}'
-            se['songurl']=servertmpl.format( se['songfn'])
+            servertmpl=hostfqdn+'/getmv?v={0}'
+            se['songurl']=servertmpl.format( se['songfn']) + '&fmt=mobile'
         elif se['stype']=='au':
-            servertmpl='http://kemity.game-server.cc:8080/getau?a={0}'
+            servertmpl=hostfqdn+'/getau?a={0}'
             se['songurl']=servertmpl.format( se['songfn'])
             se['lyricurl']=se['songurl']+'&lyric=1'
         elif se['stype']=='midi':
-            servertmpl='http://kemity.game-server.cc:8080/getmidi?a={0}'
+            servertmpl=hostfqdn+'/getmidi?a={0}'
             se['songurl']=servertmpl.format( se['songfn'])
     else:
         se['songurl']=''
@@ -187,7 +187,14 @@ def tdquery( qid='', qrange="0_20" ):
     else:
         qds = qid.split('_')
     qrange=qrange.split('_')
-    r = tdmenu.run_menu( qds, ( int(qrange[0]), int(qrange[1])))
+    if len(qrange)<2:
+        qrange=[0,qrange]
+
+    try:
+        qrangev=[int(qrange[0], int(qrange[1])]
+    except ValueError:
+        return errtmpl( 'invalid qrange syntax')
+    r = tdmenu.run_menu( qds, qrangev)
     return json.dumps( r, True, False, indent=4)
     #return errtmpl( 'no such background')
 
@@ -220,5 +227,5 @@ config.read('karaserv.cfg')
 debug(True)
 host=config.get('network', 'host')
 port=config.getint('network', 'port')
-
+hostfqdn = 'http://kemity.game-server.cc:{0}'.format(port)
 run( host=host,  port=port)
