@@ -188,11 +188,11 @@ def tdquery( qid='', qrange="0_20" ):
         qds = qid.split('_')
     qrange=qrange.split('_')
     if len(qrange)<2:
-        qrange=[0,qrange]
+        qrange=[0,qrange[0]]
 
     try:
-        qrangev=[int(qrange[0], int(qrange[1])]
-    except ValueError:
+        qrangev=[int(qrange[0]), int(qrange[1])]
+    except:
         return errtmpl( 'invalid qrange syntax')
     r = tdmenu.run_menu( qds, qrangev)
     return json.dumps( r, True, False, indent=4)
