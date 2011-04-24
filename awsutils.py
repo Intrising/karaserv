@@ -57,6 +57,17 @@ def aws_get_bgurl( v, fmt='orig'):
     fn ='bgvideo/{0}/{1}.mp4'.format( fmt, v)
     return 'https://{0}/{1}'.format( cfdist, fn)
 
+def aws_get_bgvlist():
+    bgvkeys = [ k for k in songbkt.list('bgvideo/orig') if k.name.endswith('.mp4')]
+    bgdics=[]
+    for k in bgvkeys:
+        v = k.name.split( '/')[-1].split('.')[0]
+        bgname='BG{0}'.format(v)
+        md5str= k.etag.strip('"').decode('utf-8')
+        bgdic = { 'v':v, 'name':bgname, 'url': aws_get_bgurl(v), 'size': k.size,  'md5sum':md5str }
+        bgdics.append( bgdic)
+    return bgdics
+
 def aws_close():
     songbkt.close()
     s3conn.close()

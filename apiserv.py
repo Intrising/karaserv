@@ -176,6 +176,11 @@ def getbg( v, fmt='orig' ):
     else:
         return errtmpl( 'no such background')
 
+@route('/listbgvs')
+def listbgvs():
+    bgdics= awsutils.aws_get_bgvlist()
+    return json.dumps( bgdics, True, False, indent=4)
+
 @route('/tdquery')
 @check_params()
 def tdquery( qid='', qrange="0_20" ):
