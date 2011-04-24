@@ -42,7 +42,7 @@ def aws_get_mvurl( v, fmt='orig'):
     return 'https://{0}/{1}'.format( cfdist, fn)
 
 def aws_get_midiurl( a):
-    fn='{0}.mm3'.format(a)
+    fn='midisong/{0}.mm3'.format(a)
     return 'https://{0}/{1}'.format( cfdist, fn)
 
 def aws_get_auurl( a, lyric):
